@@ -24,12 +24,12 @@ than a program with nine `if` statements in it.
 |---|---|---|---|
 | 1 | [The domain, and why a finding must cite](1-domain-and-evidence.md) | local | A finding that cannot be built without a clause and a page |
 | 2 | [The parser](2-the-parser.md) | local | Every block of a real PDF, printed with its page number |
-| 3 | Your own Azure | Azure | A model answering on your subscription, a spending cap, a blob container |
-| 4 | The Extractor, and your first graph node | Azure + LangGraph | A rule pack your agent wrote, accepted by the validator |
-| 5 | The Checker, fanned out | Azure + LangGraph | Findings over a bad application, one branch per rule |
-| 6 | The Verifier, and measuring | LangGraph | "12 findings, 9 survived" — and how many rules the Extractor really found |
-| 7 | Blob in, blob out | Azure | The graph reads a package from storage and writes findings back |
-| 8 | Deploy | Azure | One command screens a package in the cloud, laptop closed |
+| 3 | [Your own Azure](3-your-own-azure.md) | Azure | A model answering on your subscription, a spending cap, a blob container |
+| 4 | [The Extractor, and your first graph node](4-the-extractor.md) | Azure + LangGraph | A rule pack your agent wrote, accepted by the validator |
+| 5 | [The Checker, fanned out](5-the-checker.md) | Azure + LangGraph | Findings over a bad application, one branch per rule |
+| 6 | [The Verifier, and measuring](6-the-verifier.md) | LangGraph | "12 findings, 9 survived" — and how many rules the Extractor really found |
+| 7 | [Blob in, blob out](7-blob-in-blob-out.md) | Azure | The graph reads a package from storage and writes findings back |
+| 8 | [Deploy](8-deploy.md) | Azure | One command screens a package in the cloud, laptop closed |
 
 Sessions 1–2 cost nothing and need no account. Session 3 is where money becomes possible,
 which is why it begins with a spending cap.
