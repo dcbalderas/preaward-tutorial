@@ -1,0 +1,359 @@
+# Rule pack — Convocatoria Ciencia Básica y de Frontera 2025 (Secihti)
+#
+# Compiled by hand from the call's own documents, step 1.3. Every rule below
+# traces to a sentence someone can be shown. Nothing here is inferred from how
+# calls "usually" work.
+#
+# THREE DOCUMENTS, NOT ONE. The convocatoria is five pages and defers almost
+# every operational requirement to the Términos de Referencia; a third set of
+# obligations appears only in the published FAQ. clause_ref therefore names the
+# document as well as the section — "TdR §III.a.1.c", not "§III.a.1.c". See
+# `sources` below, and questions.md on whether the office treats the FAQ as
+# binding.
+
+pack_version: "2026-10-b"
+call_id: "secihti-cdf-2025"
+language: "es"
+compiled_by: "David Balderas Silva"
+compiled_at: "2026-10-21"
+
+sources:
+  Convocatoria:
+    title: "Convocatoria Ciencia Básica y de Frontera 2025"
+    version: "amended 10 April 2025"
+    pages: 5
+    note: >
+      The first published version closed on 11 April 2025. An amendment dated
+      10 April moved the close to 25 April 2025, 23:59 CDMX. This pack is
+      compiled against the AMENDED text — the version in the office's folder.
+      A pack compiled against the original would reject every proposal filed
+      between the two dates. This is why Case stamps rule_pack_version at
+      creation and never re-reads it.
+  TdR:
+    title: "Términos de Referencia, Convocatoria Ciencia Básica y de Frontera 2025"
+    version: "TDR_CDF2025_VF"
+    pages: 20
+  FAQ:
+    title: "Preguntas frecuentes CDF2025"
+    version: "published on the call page"
+    note: >
+      Secondary. Four rules below exist ONLY here — the 4 MB protocol limit,
+      the protocol header, the five eligible areas, and the fourth minimum
+      deliverable. Flagged individually. Confirm with the office before
+      treating any of them as a blocker.
+
+# The documents this call demands. This belongs to the RULE PACK, not to the
+# application package — a package that carried its own list of what it ought to
+# contain would always be complete. A5 compares the two.
+required_documents:
+  - doc_type: "solicitud"
+    rule_id: "R-CDF-PAQUETE-COMPLETO"
+    description: "Formato en línea finalizado en su totalidad en SALSA Proyectos"
+    clause_ref: "Convocatoria §VI"
+  - doc_type: "protocolo"
+    rule_id: "R-CDF-PROTOCOLO-PRESENTE"
+    description: "Protocolo de investigación en formato PDF"
+    clause_ref: "TdR §III.a.8.a"
+  - doc_type: "carta_postulacion"
+    rule_id: "R-CDF-CARTA-POSTULACION"
+    description: "Carta Oficial de Postulación firmada electrónicamente por el Representante Legal"
+    clause_ref: "TdR §III.a.7"
+
+# The four commitments of TdR §III.a.4. Listed here rather than hard-coded in
+# the agent, because the next call will demand a different four.
+minimum_deliverables:
+  - key: "articulo"
+    description: "Al menos un artículo publicado o aceptado"
+  - key: "difusion"
+    description: "Al menos una actividad de difusión"
+  - key: "divulgacion"
+    description: "Al menos una actividad de divulgación con lenguaje incluyente y no estereotipado"
+  - key: "formacion_hcti"
+    description: "Formación de al menos una persona en capacidades HCTI"
+
+rules:
+
+  # ----------------------------------------------------------------------
+  # A4 — eligibility. Mostly NOT checkable from the documents: these are
+  # facts about registries and about Secihti's own records, not about the
+  # application. That asymmetry is the point of the `checkable` flag.
+  # ----------------------------------------------------------------------
+
+  - rule_id: "R-CDF-INST-RIZOMA"
+    clause_ref: "Convocatoria §V-c"
+    description: "La Institución Beneficiaria debe estar inscrita en Rizoma y tener su registro actualizado a la fecha de cierre de la Convocatoria."
+    severity: blocker
+    typical_fix_minutes: 2880
+    owning_agent: "A4"
+    checkable: false
+    note: "Requires a lookup in Rizoma. Nothing in the application package can establish the registration is current; a stated CVU is a claim, not evidence. Fixable only before close, and institutional updates take days — hence the large estimate."
+
+  - rule_id: "R-CDF-SIN-ADEUDOS"
+    clause_ref: "Convocatoria §V-e"
+    description: "No serán elegibles las propuestas cuya Institución Beneficiaria presente, a la fecha de cierre, adeudos o irregularidades derivados de fondos Secihti o del extinto Conahcyt, o procedimientos legales o administrativos en su contra."
+    severity: blocker
+    typical_fix_minutes: null
+    owning_agent: "A4"
+    checkable: false
+    note: "Depends entirely on Secihti's internal records. The office can ask; the system cannot see it."
+
+  - rule_id: "R-CDF-RT-UNA-PROPUESTA"
+    clause_ref: "Convocatoria §V-h"
+    description: "La persona responsable técnica no podrá figurar como responsable técnica en otra propuesta presentada en la misma Convocatoria."
+    severity: blocker
+    typical_fix_minutes: null
+    owning_agent: "A4"
+    checkable: false
+    note: "Decidable only across the whole batch, and only for the part of the batch this office handles — an RT at another institution is invisible. Worth a cross-case check in week 6 rather than a per-case rule."
+
+  - rule_id: "R-CDF-RT-SIN-PROYECTO-VIGENTE"
+    clause_ref: "Convocatoria §V-h"
+    description: "La persona responsable técnica no debe contar con un proyecto vigente con apoyo de la Secihti en calidad de responsable técnica."
+    severity: blocker
+    typical_fix_minutes: null
+    owning_agent: "A4"
+    checkable: false
+    note: "Secihti's records again. The FAQ adds that an RT whose past project lacks a Constancia de Conclusión cannot formalise either — a second, later gate the office should know about."
+
+  - rule_id: "R-CDF-AREA-ELEGIBLE"
+    clause_ref: "FAQ §Áreas del conocimiento"
+    description: "La propuesta debe inscribirse en una de las cinco áreas elegibles: Físico-Matemáticas y Ciencias de la Tierra; Biología y Química; Medicina y Ciencias de la Salud; Ciencias Agropecuarias, Forestales y de Ecosistemas; Ingenierías y Desarrollo Tecnológico. Las propuestas fuera de estas áreas no serán consideradas."
+    severity: blocker
+    typical_fix_minutes: 30
+    owning_agent: "A4"
+    checkable: true
+    note: "FAQ-only; the convocatoria does not enumerate the areas. Checkable because the área is a field on the solicitud — compare it against the list, exactly."
+
+  - rule_id: "R-CDF-CIERRE"
+    clause_ref: "Convocatoria §IV y §V-b"
+    description: "Sólo serán evaluadas las propuestas enviadas en tiempo y forma a través del sistema en línea. El sistema cierra el 25 de abril de 2025 a las 23:59 horas (Ciudad de México) y la propuesta no puede modificarse ni reabrirse después del cierre por ningún motivo."
+    severity: blocker
+    typical_fix_minutes: null
+    owning_agent: "A4"
+    checkable: true
+    note: "Checkable against the finalisation timestamp printed on the solicitud. Unfixable by definition: after the close there is nothing to fix."
+
+  # ----------------------------------------------------------------------
+  # A5 — completeness. Nine rules, all decidable in pure Python. This is the
+  # agent built in step 1.6, and the reason this call replaced FID as the
+  # primary fixture: FID gave A5 exactly one rule.
+  # ----------------------------------------------------------------------
+
+  - rule_id: "R-CDF-PAQUETE-COMPLETO"
+    clause_ref: "Convocatoria §VI; TdR §VI"
+    description: "Serán revisadas únicamente las propuestas finalizadas en su totalidad, con los documentos anexos completos antes del cierre del sistema."
+    severity: blocker
+    typical_fix_minutes: 60
+    owning_agent: "A5"
+    checkable: true
+    note: "The TdR gives one chance to cure: a single notice by email, five working days, then the proposal is discarded. That five-day window is the whole economic case for screening before submission rather than after."
+
+  - rule_id: "R-CDF-PROTOCOLO-PRESENTE"
+    clause_ref: "TdR §III.a.8.a"
+    description: "Deberá anexarse en formato PDF el Protocolo de investigación. No deberá contener información distinta a la capturada en el sistema."
+    severity: blocker
+    typical_fix_minutes: 480
+    owning_agent: "A5"
+    checkable: true
+    note: "Presence is checkable; 'no information differing from the system' is not — that is a comparison of two documents' meaning and belongs to A11 in week 6."
+
+  - rule_id: "R-CDF-PROTOCOLO-TAMANO"
+    clause_ref: "FAQ §Protocolo de investigación"
+    description: "El archivo PDF del Protocolo de investigación no debe exceder 4 MB."
+    severity: fixable
+    typical_fix_minutes: 30
+    owning_agent: "A5"
+    checkable: true
+    note: "FAQ-only; neither the convocatoria nor the TdR states a size limit. Checkable from the file itself without opening it, which makes it the cheapest check in the pack."
+
+  - rule_id: "R-CDF-PROTOCOLO-ENCABEZADO"
+    clause_ref: "FAQ §Protocolo de investigación"
+    description: "El encabezado del Protocolo de investigación debe mostrar el número de propuesta y el título del proyecto, y debe usar el formato oficial publicado en la página de la Convocatoria."
+    severity: fixable
+    typical_fix_minutes: 15
+    owning_agent: "A5"
+    checkable: true
+    note: "FAQ-only. Two obligations in one sentence: the header content is checkable, 'official format' is not until someone obtains the template. Split it if the office confirms the template matters."
+
+  - rule_id: "R-CDF-RESUMEN-500"
+    clause_ref: "TdR §III.a.1.c"
+    description: "El resumen ejecutivo debe explicar objetivo, metodología y relevancia del proyecto en un máximo de 500 palabras."
+    severity: fixable
+    typical_fix_minutes: 45
+    owning_agent: "A5"
+    checkable: true
+
+  - rule_id: "R-CDF-ENTREGABLES-MINIMOS"
+    clause_ref: "TdR §III.a.4; FAQ §Compromisos mínimos"
+    description: "La propuesta debe comprometer los cuatro entregables mínimos: al menos un artículo, una actividad de difusión, una actividad de divulgación con lenguaje incluyente y no estereotipado, y la formación de al menos una persona en capacidades HCTI."
+    severity: blocker
+    typical_fix_minutes: 60
+    owning_agent: "A5"
+    checkable: true
+    note: "The TdR states the commitments; the FAQ is what makes clear there are four and that all are mandatory."
+
+  - rule_id: "R-CDF-ARTICULO-NACIONAL"
+    clause_ref: "TdR §III.a.4"
+    description: "Al menos un artículo comprometido debe publicarse o aceptarse en una revista mexicana de acceso abierto. Una revista internacional no sustituye este compromiso."
+    severity: blocker
+    typical_fix_minutes: 20
+    owning_agent: "A5"
+    checkable: true
+    note: "The single most commonly missed commitment according to the FAQ, and trivially checkable — which is the best possible combination for a first agent."
+
+  - rule_id: "R-CDF-CRONOGRAMA-METAS"
+    clause_ref: "TdR §III.a.2"
+    description: "El plan de trabajo debe incluir un cronograma y metas medibles por etapa."
+    severity: fixable
+    typical_fix_minutes: 120
+    owning_agent: "A5"
+    checkable: true
+    note: "Presence of a cronograma and of a meta per declared etapa is checkable. Whether a meta is genuinely measurable is a judgement, and belongs to A7."
+
+  - rule_id: "R-CDF-PRESUPUESTO-DESGLOSE"
+    clause_ref: "TdR §III.a.5"
+    description: "El presupuesto debe presentarse desglosado y justificado por etapa y por rubro."
+    severity: fixable
+    typical_fix_minutes: 180
+    owning_agent: "A5"
+    checkable: true
+    note: "A5 checks the breakdown exists and covers every declared etapa. The arithmetic inside it belongs to A8."
+
+  # ----------------------------------------------------------------------
+  # A6 — team and roles. All five checkable, and three of them are pure
+  # counting. A good reminder that 'needs a model' is usually false.
+  # ----------------------------------------------------------------------
+
+  - rule_id: "R-CDF-GRUPO-MIN-3"
+    clause_ref: "TdR §II.1.2"
+    description: "Una propuesta en la modalidad Grupo de investigación debe estar formada por al menos tres personas investigadoras."
+    severity: blocker
+    typical_fix_minutes: 1440
+    owning_agent: "A6"
+    checkable: true
+
+  - rule_id: "R-CDF-GRUPO-DOS-INSTITUCIONES"
+    clause_ref: "TdR §II.1.2"
+    description: "Las personas investigadoras de un Grupo de investigación deben estar adscritas, cuando menos, a dos instituciones nacionales diferentes."
+    severity: blocker
+    typical_fix_minutes: 1440
+    owning_agent: "A6"
+    checkable: true
+    note: "Counting distinct adscripciones. The Acuerdo de Colaboración that formalises this is NOT required at submission — only before the CAR is signed — so its absence is not a finding here."
+
+  - rule_id: "R-CDF-RA-DISTINTA-RT"
+    clause_ref: "TdR §III.a.7.c"
+    description: "La Institución Beneficiaria debe designar una persona Responsable Administrativa, la cual no podrá ser la misma identificada como responsable técnica del proyecto."
+    severity: blocker
+    typical_fix_minutes: 60
+    owning_agent: "A6"
+    checkable: true
+    note: "A string comparison that stops a proposal. Exactly the kind of rule that is embarrassing to miss and free to catch."
+
+  - rule_id: "R-CDF-EVALUADORES-MIN-3"
+    clause_ref: "TdR §III.a.6"
+    description: "La propuesta debe sugerir un mínimo de tres personas investigadoras ajenas al proyecto como posibles evaluadoras."
+    severity: fixable
+    typical_fix_minutes: 60
+    owning_agent: "A6"
+    checkable: true
+
+  - rule_id: "R-CDF-EVALUADORES-SIN-ADSCRIPCION"
+    clause_ref: "TdR §III.a.6"
+    description: "Las personas propuestas como evaluadoras no deben contar con adscripción a ninguna de las instituciones participantes."
+    severity: fixable
+    typical_fix_minutes: 60
+    owning_agent: "A6"
+    checkable: true
+    note: "Cross-reference between two lists in the same document — the participating institutions and the suggested evaluators. No external data needed."
+
+  # ----------------------------------------------------------------------
+  # A8 — budget. Arithmetic, which a model is strictly worse at than Python.
+  # ----------------------------------------------------------------------
+
+  - rule_id: "R-CDF-MONTO-MAXIMO"
+    clause_ref: "Convocatoria §III"
+    description: "El monto total solicitado no debe exceder $1,250,000.00 MXN en la modalidad Individual ni $2,000,000.00 MXN en la modalidad Grupo de investigación."
+    severity: blocker
+    typical_fix_minutes: 90
+    owning_agent: "A8"
+    checkable: true
+
+  - rule_id: "R-CDF-MONTO-POR-ETAPA"
+    clause_ref: "Convocatoria §III"
+    description: "El monto por etapa no debe exceder, en la modalidad Individual, $250,000.00 en la Etapa 1 y $500,000.00 en las Etapas 2 y 3; en la modalidad Grupo de investigación, $400,000.00 en la Etapa 1 y $800,000.00 en las Etapas 2 y 3."
+    severity: blocker
+    typical_fix_minutes: 90
+    owning_agent: "A8"
+    checkable: true
+    note: "Separate from the total: a budget can respect the total and still break a stage ceiling by front-loading. Two rules, because the fix is different."
+
+  - rule_id: "R-CDF-ETAPAS-2-O-3"
+    clause_ref: "Convocatoria §III"
+    description: "El proyecto debe plantearse en dos o tres etapas, correspondientes a los ejercicios fiscales 2025, 2026 y 2027."
+    severity: blocker
+    typical_fix_minutes: 60
+    owning_agent: "A8"
+    checkable: true
+
+  - rule_id: "R-CDF-HONORARIOS-30"
+    clause_ref: "TdR §V"
+    description: "Se podrá autorizar hasta el 30% del total del proyecto en el rubro de honorarios por servicios profesionales."
+    severity: fixable
+    typical_fix_minutes: 60
+    owning_agent: "A8"
+    checkable: true
+
+  - rule_id: "R-CDF-RUBROS-NO-FINANCIABLES"
+    clause_ref: "TdR §V"
+    description: "El presupuesto no debe incluir rubros no financiables: gastos indirectos de operación, bienes inmuebles, sueldos y salarios, vehículos, mobiliario de oficina ajeno al proyecto, membresías, suscripciones a revistas, mantenimiento de derechos de propiedad intelectual, telefonía fija o móvil, ni propinas."
+    severity: blocker
+    typical_fix_minutes: 90
+    owning_agent: "A8"
+    checkable: true
+    note: "Matching budget line labels against a prohibited list. Catches the literal cases; a salary disguised as 'apoyo técnico' is A11's problem, not A8's."
+
+  # ----------------------------------------------------------------------
+  # A9 — compliance and ethics. Neither is checkable, and saying so is the
+  # useful part: these are the two the office must look at by hand.
+  # ----------------------------------------------------------------------
+
+  - rule_id: "R-CDF-ETICA-SERES-VIVOS"
+    clause_ref: "TdR §IX; §V (Especies menores)"
+    description: "Cuando los estudios involucren la participación de seres humanos o la utilización de animales, la Institución Beneficiaria debe cumplir la normatividad vigente; los animales de laboratorio requieren la aprobación del Comité de Ética de la institución beneficiaria."
+    severity: blocker
+    typical_fix_minutes: null
+    owning_agent: "A9"
+    checkable: false
+    note: "An ethics committee's determination is not derivable from the proposal text. The most A9 can do is detect that the proposal describes work of this kind and raise it for the officer — which is a different rule, and should be written as one once the office says what it wants."
+
+  - rule_id: "R-CDF-COMUNIDADES-PERMISO"
+    clause_ref: "TdR §IX"
+    description: "Cuando el proyecto involucre comunidades indígenas, el beneficiario deberá contar con el permiso de las autoridades de dichas comunidades."
+    severity: blocker
+    typical_fix_minutes: null
+    owning_agent: "A9"
+    checkable: false
+    note: "Requires a document that is not part of the submission package and a judgement about whether the work involves such communities at all."
+
+  # ----------------------------------------------------------------------
+  # A10 — institutional authority.
+  # ----------------------------------------------------------------------
+
+  - rule_id: "R-CDF-CARTA-POSTULACION"
+    clause_ref: "TdR §III.a.7"
+    description: "La Carta Oficial de Postulación debe estar presente y firmada electrónicamente por el Representante Legal de la Institución Beneficiaria."
+    severity: blocker
+    typical_fix_minutes: 2880
+    owning_agent: "A10"
+    checkable: true
+    note: "Presence and a named signatory are checkable. Whether the electronic signature is valid is not — SALSA holds that, and the system never sees it. Two working days because it moves at the Representante Legal's pace, not the applicant's."
+
+  - rule_id: "R-CDF-RT-ADSCRIPCION"
+    clause_ref: "TdR §III.a.1.e"
+    description: "La persona responsable técnica deberá contar con adscripción a la Institución Beneficiaria."
+    severity: blocker
+    typical_fix_minutes: null
+    owning_agent: "A10"
+    checkable: true
+    note: "Checkable as a comparison between two fields on the solicitud — the RT's adscripción and the named Institución Beneficiaria. Unfixable within the application: changing it means a different institution, which is a different proposal."
