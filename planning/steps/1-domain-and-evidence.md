@@ -109,7 +109,14 @@ class Finding(BaseModel):
     confidence: float = Field(default=1.0, ge=0.0, le=1.0)
     found_by: AgentId
     quote: str | None = None             # the verbatim text relied on; session 5 fills it
+    pack_id: str | None = None           # which authority's rule this is; session 5 fills it
 ```
+
+Two fields are carried now and filled later. `quote` holds the verbatim text the claim rests
+on, and session 6's Verifier checks it against the page. `pack_id` records *whose* rule was
+broken — the funder screens against its convocatoria, the institution against its own
+lineamientos, and from session 4 you extract both. A finding that doesn't say which
+authority it answers to cannot be acted on, because the two are fixed in different ways.
 
 Add a validator on `clause_ref` that rejects empty or whitespace-only strings. Three lines,
 and it closes the gap between "has a clause_ref field" and "cites a clause".

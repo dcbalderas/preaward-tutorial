@@ -9,9 +9,15 @@ course, not an accident of the design.
 | | agent | model | in → out |
 |---|---|---|---|
 | | **Parser** | no | PDF → blocks of text, each with a page number |
-| | **Extractor** | yes | the call's own documents → a rule pack |
+| | **Call Extractor** | yes | the funder's convocatoria and TdR → a rule pack |
+| | **Institution Extractor** | yes | your institution's lineamientos → a second rule pack |
 | | **Checker** | yes | one rule + the application → a finding, with the words it relied on |
 | | **Verifier** | no | drops any finding whose quote is not on the page it cites |
+
+Two authorities, because that is the real shape of the problem: a proposal must satisfy the
+funder *and* the institution, and the two were written without consulting each other. They
+can contradict one another, and a system that merges them into one list hides the only fact
+that tells an officer what to do about it.
 
 The Checker has never seen the rules it enforces. That is what makes this a system rather
 than a program with nine `if` statements in it.
@@ -26,11 +32,12 @@ than a program with nine `if` statements in it.
 | 1 | [The domain, and why a finding must cite](1-domain-and-evidence.md) | local | A finding that cannot be built without a clause and a page |
 | 2 | [The parser](2-the-parser.md) | local | Every block of a real PDF, printed with its page number |
 | 3 | [Your own Azure](3-your-own-azure.md) | Azure | A model answering on your subscription, a spending cap, a blob container |
-| 4 | [The Extractor, and your first graph node](4-the-extractor.md) | Azure + LangGraph | A rule pack your agent wrote, accepted by the validator |
-| 5 | [The Checker, fanned out](5-the-checker.md) | Azure + LangGraph | Findings over a bad application, one branch per rule |
-| 6 | [The Verifier, and measuring](6-the-verifier.md) | LangGraph | "12 findings, 9 survived" — and how many rules the Extractor really found |
+| 4 | [Two Extractors, and your first graph](4-the-extractor.md) | Azure + LangGraph | Two rule packs your agents wrote, both accepted by the validator |
+| 5 | [The Checker, fanned out](5-the-checker.md) | Azure + LangGraph | Findings over a bad application, one branch per rule, across both packs |
+| 6 | [The Verifier, and measuring](6-the-verifier.md) | LangGraph | "23 produced, 16 verified" — and what you can't measure without an answer key |
 | 7 | [Blob in, blob out](7-blob-in-blob-out.md) | Azure | The graph reads a package from storage and writes findings back |
 | 8 | [Deploy](8-deploy.md) | Azure | One command screens a package in the cloud, laptop closed |
+| 9 | [The Reconciler](9-optional-the-reconciler.md) *(optional)* | Azure + LangGraph | Where your two rulebooks contradict each other, reported without choosing a winner |
 
 Sessions 0–2 cost nothing and need no account. Session 3 is where money becomes possible,
 which is why it begins with a spending cap.
@@ -48,6 +55,10 @@ it running, the charges are yours.
 
 Tag each session as you finish it — `git tag session-3 && git push --tags` — so you can
 check out a known-good point when something stops working.
+
+**Session 9 is optional.** Sessions 0–8 are a complete, deployed system. Session 9 adds a
+sixth agent that finds contradictions between the two rulebooks; take it if there is time, or
+hand it to students who finish early.
 
 ---
 
