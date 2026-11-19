@@ -1,10 +1,10 @@
-# 9 — The Reconciler *(optional)*
+# 10 — The Reconciler *(optional)*
 
-**Optional session · ~2 h · a few cents · Azure + LangGraph** · [← 8](8-deploy.md) · [all sessions](README.md)
+**Optional session · ~2 h · a few cents · Azure + LangGraph** · [← 9](9-deploy.md) · [all sessions](README.md)
 
-> Skip this if you are short of time. Sessions 0–8 are a complete system. This one adds the
-> agent that notices when your two authorities contradict each other — the most interesting
-> problem in the domain, and the one with no clean answer.
+> Skip this if you are short of time. Sessions 0–9 are a complete, deployed system with a
+> web interface. This one adds the agent that notices when your two authorities contradict
+> each other — the most interesting problem in the domain, and the one with no clean answer.
 
 ## Why
 
@@ -14,14 +14,14 @@ hiring them. A budget line for an undergraduate is compliant with the call and
 non-compliant with the institution at the same moment.
 
 Your system can't see that. It produces a finding from one pack, or silence from both, and
-an officer reading the report has no way to know the two rulebooks disagree rather than one
-of them being broken.
+whoever is reading the page has no way to know the two rulebooks disagree rather than one of
+them being broken.
 
 The Reconciler finds those pairs. What it must **not** do is resolve them — and that
 restraint is the whole lesson. A funder breach is fixed by changing the proposal. An
 institutional breach can also be fixed by an exception from the institution. If the system
-picks a winner, it hides from the officer the one fact that determines what they can
-actually do.
+picks a winner, it hides from the officer the one fact that determines what they can actually
+do.
 
 ## What you're building
 
@@ -37,7 +37,8 @@ This is the first design decision and it's worth stopping on.
 
 A conflict is a relation between two **rules**. It has nothing to do with any particular
 proposal. Run the Reconciler inside the screening graph and you pay for it on every
-application, for an answer that never changes.
+application — and now on every click of a button on a public page — for an answer that never
+changes.
 
 So: a separate entry point that takes two packs and writes `rules/conflicts.yaml`. The
 screening graph reads that file and annotates findings whose rule appears in it. Re-run the
@@ -86,8 +87,8 @@ be itemised by stage" and "purchases over 50,000 pesos require three quotations"
 budget rules and entirely compatible.
 
 A conflict means: *an application that satisfies one of these necessarily violates the
-other*. Say that, and give an example of a compatible pair in the prompt so the model has
-the contrast.
+other*. Say that, and give an example of a compatible pair in the prompt so the model has the
+contrast.
 
 Expect false positives anyway. This is the least reliable agent in the course, which is why
 its output is a short file a human reads rather than something that changes a decision.
@@ -111,19 +112,23 @@ function; reuse it. A conflict whose evidence can't be located is dropped.
 That reuse is worth pointing at explicitly. The verification pattern from session 6 was not
 specific to findings; it applies to any claim a model makes about text you hold.
 
-### Wiring it into the report
+### Showing it
 
-In the screening graph, after `verify`, load `rules/conflicts.yaml` and mark any finding
-whose `rule_id` appears in a conflict:
+Two places, both cheap.
+
+In the API response, mark any finding whose `rule_id` appears in a conflict — a file read and
+a dictionary lookup, no model call in the screening path.
+
+On session 8's page, render that as a line under the finding:
 
 ```
-TEC LINEAMIENTOS          2 findings
-  BLOCKER  R-TEC-CONTRATACION-ALUMNOS   Lineamientos §6.3   solicitud.pdf p.4
-           ⚠ conflicts with R-CDF-RECIBO-SIMPLE (FAQ §Pagos) — see conflicts.yaml
+⚠ Esta regla contradice R-CDF-RECIBO-SIMPLE (FAQ §Pagos).
+  La convocatoria lo permite; los lineamientos no.
 ```
 
-A file read and a dictionary lookup. No model call in the screening path, because the work
-was done once, earlier.
+That line is the single most interesting thing a visiting teacher will see, because it is the
+part no amount of careful reading by one person would catch: two documents, written by two
+organisations, that cannot both be satisfied. Give it room on the page.
 
 ## Do it
 
@@ -136,7 +141,7 @@ was done once, earlier.
 4. Run it over the candidate pairs. Read every result — there won't be many.
 5. Verify both quotes; drop what fails.
 6. Write `rules/conflicts.yaml`.
-7. Annotate the screening report.
+7. Annotate the API response and the page.
 8. Add the real numbers to `docs/results.md`: pairs considered, conflicts proposed, conflicts
    surviving verification, conflicts you agree with after reading them.
 
@@ -157,14 +162,14 @@ cheap classification pass. No cleverness, no new model, no prompt tuning — jus
 most pairs cannot possibly conflict and declining to ask about them.
 
 **The verification pattern generalises.** Session 6 checked a finding's quote against a page.
-Session 9 checks a conflict's quotes against two rule descriptions. Same function, different
+Session 10 checks a conflict's quotes against two rule descriptions. Same function, different
 claim. Any time a model asserts something about text you already hold, you can check it for
 the price of a string comparison.
 
 **This agent is allowed to be unreliable.** Its output is a handful of lines a human reads
-before deciding anything. Compare with the Checker, whose findings go to an officer as
-claims about a specific document. Matching the reliability you need to the consequence of
-being wrong is a design decision, and most systems never make it deliberately.
+before deciding anything. Compare with the Checker, whose findings go to an officer as claims
+about a specific document. Matching the reliability you need to the consequence of being
+wrong is a design decision, and most systems never make it deliberately.
 
 **What is still missing.** Nothing records that an officer saw a conflict and decided; there
 is no exception workflow; and a conflict between a rule and *itself in a newer version of the
@@ -173,13 +178,13 @@ the end.
 
 ## Done when
 
-`rules/conflicts.yaml` exists, every conflict in it has two verified quotes, and the screening
-report marks findings whose rule is involved in one. `docs/results.md` has the four counts.
+`rules/conflicts.yaml` exists, every conflict in it has two verified quotes, the page marks
+findings whose rule is involved in one, and `docs/results.md` has the four counts.
 
 And you can say, out of the conflicts the agent proposed, how many you agreed with after
 reading them. That last number is the honest one.
 
-Commit as `session 9: the reconciler (optional)`.
+Commit as `session 10: the reconciler (optional)`.
 
 ## If it breaks
 
@@ -204,4 +209,5 @@ comparing within the same pack. Only cross-pack pairs sharing a subject.
 ## Links
 
 - [session 6](6-the-verifier.md) — the quote-verification function you're reusing
+- [session 8](8-the-interface.md) — where the conflict line goes on the page
 - [all sessions](README.md)

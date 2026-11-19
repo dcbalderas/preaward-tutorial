@@ -36,8 +36,9 @@ than a program with nine `if` statements in it.
 | 5 | [The Checker, fanned out](5-the-checker.md) | Azure + LangGraph | Findings over a bad application, one branch per rule, across both packs |
 | 6 | [The Verifier, and measuring](6-the-verifier.md) | LangGraph | "23 produced, 16 verified" — and what you can't measure without an answer key |
 | 7 | [Blob in, blob out](7-blob-in-blob-out.md) | Azure | The graph reads a package from storage and writes findings back |
-| 8 | [Deploy](8-deploy.md) | Azure | One command screens a package in the cloud, laptop closed |
-| 9 | [The Reconciler](9-optional-the-reconciler.md) *(optional)* | Azure + LangGraph | Where your two rulebooks contradict each other, reported without choosing a winner |
+| 8 | [The interface](8-the-interface.md) | local | A page that screens a package and shows the evidence for every finding |
+| 9 | [Deploy](9-deploy.md) | Azure | A URL you can send a colleague, laptop closed |
+| 10 | [The Reconciler](10-optional-the-reconciler.md) *(optional)* | Azure + LangGraph | Where your two rulebooks contradict each other, reported without choosing a winner |
 
 Sessions 0–2 cost nothing and need no account. Session 3 is where money becomes possible,
 which is why it begins with a spending cap.
@@ -56,9 +57,9 @@ it running, the charges are yours.
 Tag each session as you finish it — `git tag session-3 && git push --tags` — so you can
 check out a known-good point when something stops working.
 
-**Session 9 is optional.** Sessions 0–8 are a complete, deployed system. Session 9 adds a
-sixth agent that finds contradictions between the two rulebooks; take it if there is time, or
-hand it to students who finish early.
+**Session 10 is optional.** Sessions 0–9 are a complete, deployed system with a web
+interface. Session 10 adds a sixth agent that finds contradictions between the two rulebooks;
+take it if there is time, or hand it to students who finish early.
 
 ---
 

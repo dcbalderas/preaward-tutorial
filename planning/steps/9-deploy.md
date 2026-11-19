@@ -1,11 +1,12 @@
-# 8 — Deploy
+# 9 — Deploy
 
-**Session 8 · ~1.5 h · pennies, then nothing · Azure** · [← 7](7-blob-in-blob-out.md) · [all sessions](README.md)
+**Session 9 · ~1.5 h · pennies, then nothing · Azure** · [← 8](8-the-interface.md) · [all sessions](README.md) · [optional: 10](10-optional-the-reconciler.md)
 
 ## Why
 
 Everything works and it still needs your laptop open and your `az login` fresh. This session
-puts the graph in a container, gives it an identity of its own, and runs it in Azure.
+puts the graph and its page in a container, gives it an identity of its own, and runs it in
+Azure — so the thing you show another teacher is a URL rather than a screen-share.
 
 The interesting part is not the container. It is that the code does not change. Session 3
 chose `DefaultAzureCredential` over an API key, and the payment arrives today: the same
@@ -16,39 +17,25 @@ nothing in the source knows the difference.
 
 ```
 Dockerfile
-src/preaward/app.py        a tiny HTTP wrapper around the graph
 infra/deploy.sh
 ```
 
-### The HTTP surface
-
-Two endpoints, no more:
-
-```
-POST /screen   {"package": "bad"}   ->  {"produced": 17, "verified": 12, "rejected": 5,
-                                         "findings": [...]}
-GET  /health                        ->  200
-```
-
-FastAPI, about twenty lines. `POST /screen` builds the initial state, invokes the compiled
-graph, and returns the result. The graph itself is imported unchanged from session 7.
-
-Build the graph once at module scope, not per request. Compiling it per request works and
-wastes a few hundred milliseconds every time.
-
-`/health` exists because the platform probes it. Without one, a container that is actually
-fine gets restarted.
+Nothing new in `src/` — session 8's `app.py` already serves both the API and the page.
 
 ### The container
 
-A small Python 3.12 base image, `uv` to install from the lockfile, then run the app. Two
+A small Python 3.12 base image, `uv` to install from the lockfile, then run the app. Three
 things worth getting right:
 
 - **Don't copy `.env`.** Configuration comes from the environment in Azure. Add it to
   `.dockerignore` as well as `.gitignore` — this is the most common way a key ends up in a
   published image.
+- **Don't copy `institution/`.** The lineamientos are internal; the container has no reason
+  to carry them. The extracted pack is what the running system needs.
 - **Don't bake in `samples/`.** The documents live in blob storage now. A container carrying
   the fixtures is a container that will quietly screen the wrong thing one day.
+
+Do copy `src/preaward/static/` — the page is part of the application.
 
 ### Deploying
 
@@ -80,10 +67,10 @@ az containerapp identity assign \
 
 Then grant that identity the same two roles you gave yourself: **Storage Blob Data
 Contributor** on the storage account, and the role your Foundry resource needs for
-inference. Get the principal id from the identity command's output and assign by scope, the
+inference. Take the principal id from the identity command's output and assign by scope, the
 same shape as session 7's assignment.
 
-Then set the configuration:
+Then the configuration:
 
 ```bash
 az containerapp update \
@@ -93,22 +80,33 @@ az containerapp update \
 
 No secrets in that list. That's the point.
 
+### Before you send the link to anyone
+
+The ingress is **external** and there is no authentication. Anyone with the URL can run a
+screening on your subscription, at your expense, as many times as they like.
+
+For showing a colleague for twenty minutes that is a reasonable trade. For leaving it up, it
+is not. Either keep the URL private and tear it down afterwards, or put Container Apps' own
+authentication in front of it. Decide deliberately rather than by forgetting.
+
+Everything screened is synthetic, so there is no personal data exposure — which is the only
+reason this is a defensible default at all.
+
 ## Do it
 
-1. Write `app.py` and run it locally: `uvicorn preaward.app:app --port 8000`, then `curl`
-   the two endpoints. Get it working before containerising.
+1. Run the app locally one more time and confirm the page works end to end.
 2. Write the `Dockerfile` and `.dockerignore`. Build and run locally, mounting your Azure
    credentials so it can still authenticate.
 3. Create the Container Apps environment, then `az containerapp up`.
 4. Assign the identity, grant the two roles, set the environment variables.
-5. `curl` the public URL.
+5. Open the public URL in a browser and screen a package.
 6. Watch the logs while a request runs:
 
 ```bash
 az containerapp logs show --name preaward-api --resource-group preaward-rg --follow
 ```
 
-7. Close your laptop, call it from your phone.
+7. Close your laptop. Open the URL on your phone. That's the session.
 
 ### Then tear it down
 
@@ -117,8 +115,7 @@ az group delete --name preaward-rg --yes --no-wait
 ```
 
 Do this at the end of the course, deliberately. Everything was in one resource group so that
-this is one line — and a student who forgets is a student who discovers Azure billing in
-February.
+this is one line — and these are your resources, on your subscription, at your expense.
 
 ## Understand
 
@@ -129,62 +126,63 @@ One line of code, two environments, zero secrets — and it only works because s
 it over a key.
 
 **Scale to zero changes the cost model.** No requests, no container, no charge beyond
-storage. The first request after idle pays a cold start of a few seconds. For a screening
-queue that runs in bursts, that's the right trade — and it's worth saying why you'd choose
-differently for something latency-sensitive.
+storage. The first request after idle pays a cold start of a few seconds — which, combined
+with a minute of model calls, is worth saying on the page rather than leaving someone
+guessing.
 
-**Deploying changed no business logic.** The Extractor, the Checker and the Verifier are
-byte-identical to session 6. What changed was where documents come from (session 7) and who
-the process is (session 8). That separation was designed in session 2 and paid for twice.
+**Deploying changed no business logic.** The extractors, the Checker and the Verifier are
+byte-identical to session 6. What changed was where documents come from (session 7), what the
+system has a face for (session 8), and who the process is (session 9). That separation was
+designed in session 2 and has now paid for itself three times.
 
-**An HTTP endpoint is a design decision.** It suits a queue that calls you. A blob trigger
-would suit documents arriving on their own; a scheduled job would suit a nightly sweep. The
-graph doesn't care — which is the argument for keeping the orchestration separate from the
-trigger.
+**An HTTP endpoint is a design decision.** It suits a person clicking a button, which is what
+session 8 built. A blob trigger would suit documents arriving on their own; a scheduled job
+would suit a nightly sweep. The graph doesn't care — which is the argument for keeping
+orchestration separate from trigger.
 
 **What this system still isn't.** There's no human in the loop, no record of who overrode
-what, no handling of a model being unavailable, and no audit trail beyond the findings
-themselves. Everything screened is synthetic, deliberately: a real application is personal
-data and would need a conversation with the office before it went anywhere near a cloud
-account. Name those gaps at the end — a student who can say what their system doesn't do has
-understood it.
+what, no handling of a model being unavailable, no authentication, and no audit trail beyond
+the findings themselves. Everything screened is synthetic, deliberately: a real application
+is personal data and would need a conversation with the office before it went anywhere near a
+cloud account. Name those gaps when you demo it — a student who can say what their system
+doesn't do has understood it, and so has a teacher.
 
 ## Done when
 
-```bash
-curl -X POST https://<your-app>.azurecontainerapps.io/screen \
-     -H 'content-type: application/json' -d '{"package":"bad"}'
-```
+The public URL opens the page, screens `bad`, and shows findings with clause refs, pages and
+quotes — from a laptop that isn't running the code — and `findings.json` for that package has
+appeared in blob storage.
 
-returns findings with clause refs, pages and quotes, from a laptop that isn't running the
-code — and `findings.json` for that package has appeared in blob storage.
-
-Commit as `session 8: deployed to Azure Container Apps`.
+Commit as `session 9: deployed to Azure Container Apps`.
 
 ## If it breaks
 
 **`az containerapp up` fails during build** — build locally first. Nearly always a missing
 system package in the image or a lockfile that doesn't match the Python version.
 
-**The app starts, then every request 500s with an auth error** — the identity is assigned but
-has no roles, or the roles haven't propagated. Check both scopes; wait five minutes.
+**The page 404s but the API works** — the static directory wasn't copied into the image.
+Check your `.dockerignore` isn't excluding it.
+
+**Every request 500s with an auth error** — the identity is assigned but has no roles, or the
+roles haven't propagated. Check both scopes; wait five minutes.
 
 **`DefaultAzureCredential` fails in the container but works locally** — it's falling through
 the chain to a developer sign-in that doesn't exist there. The error names each attempt in
 order; read the managed-identity line.
 
-**Requests time out** — a full pack is twenty-nine model calls, and the default ingress
-timeout may be shorter than that. Lower the rule count, raise `max_concurrency`, or make the
-endpoint start the run and return an id.
+**Requests time out** — a full run is dozens of model calls, and the default ingress timeout
+may be shorter. Lower the rule count, raise `max_concurrency`, or make the endpoint start the
+run and return an id the page polls.
 
 **Cold start looks like a failure** — the first request after idle takes seconds. Call
-`/health` first and try again before debugging.
+`/health` first, or say so on the page.
 
 **It works but costs more than expected** — check `max_concurrency` and how many rules each
-request screens. Twenty-nine calls per request adds up quickly if something is retrying.
+request screens. Dozens of calls per request adds up quickly if something is retrying, and
+the URL is public.
 
 ## Links
 
 - [Container Apps quickstart](https://learn.microsoft.com/en-us/azure/container-apps/get-started) — `up`, ingress, logs
 - [Managed identities](https://learn.microsoft.com/en-us/azure/container-apps/managed-identity) — assigning and granting
-- [all sessions](README.md)
+- [optional session 10](10-optional-the-reconciler.md) — where your two rulebooks contradict each other

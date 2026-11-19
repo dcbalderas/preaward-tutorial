@@ -1,6 +1,6 @@
 # 7 — Blob in, blob out
 
-**Session 7 · ~1.5 h · pennies · Azure** · [← 6](6-the-verifier.md) · [all sessions](README.md) · [next →](8-deploy.md)
+**Session 7 · ~1.5 h · pennies · Azure** · [← 6](6-the-verifier.md) · [all sessions](README.md) · [next →](8-the-interface.md)
 
 ## Why
 
