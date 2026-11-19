@@ -64,6 +64,22 @@ A budget **alerts**, it does not **stop**. Nothing here will hard-stop your spen
 why the alert thresholds matter and why session 5 runs on a subset of rules before it runs
 on all of them.
 
+> **These are your resources, on your subscription, at your expense.**
+>
+> Nobody else can see your spend, cap it, or switch it off. A deployment you leave running
+> bills until you delete it, and a loop you leave running bills faster. Set the budget in
+> this step — not later — and keep the alert emails.
+>
+> When you are finished with the course, or if you stop partway through, delete everything
+> in one command:
+>
+> ```bash
+> az group delete --name preaward-rg --yes --no-wait
+> ```
+>
+> That is the only reason every resource in this session goes into one resource group. Run
+> it on the last day. If you forget, the charges are yours.
+
 ### 3. The Foundry resource
 
 ```bash

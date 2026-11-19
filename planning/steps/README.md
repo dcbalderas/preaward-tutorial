@@ -22,6 +22,7 @@ than a program with nine `if` statements in it.
 
 | # | Session | Runs on | You end with |
 |---|---|---|---|
+| 0 | [The repository](0-setup.md) | local | The project on GitHub, with `.gitignore` written before anything it protects |
 | 1 | [The domain, and why a finding must cite](1-domain-and-evidence.md) | local | A finding that cannot be built without a clause and a page |
 | 2 | [The parser](2-the-parser.md) | local | Every block of a real PDF, printed with its page number |
 | 3 | [Your own Azure](3-your-own-azure.md) | Azure | A model answering on your subscription, a spending cap, a blob container |
@@ -31,8 +32,22 @@ than a program with nine `if` statements in it.
 | 7 | [Blob in, blob out](7-blob-in-blob-out.md) | Azure | The graph reads a package from storage and writes findings back |
 | 8 | [Deploy](8-deploy.md) | Azure | One command screens a package in the cloud, laptop closed |
 
-Sessions 1–2 cost nothing and need no account. Session 3 is where money becomes possible,
+Sessions 0–2 cost nothing and need no account. Session 3 is where money becomes possible,
 which is why it begins with a spending cap.
+
+**Session 3 onwards runs on your own Azure subscription, at your own expense.** Nobody else
+can see or cap your spend. Set the budget when session 3 tells you to, and delete the
+resource group when you are done:
+
+```bash
+az group delete --name preaward-rg --yes --no-wait
+```
+
+Every resource in this course lives in that one group so that this is one line. If you leave
+it running, the charges are yours.
+
+Tag each session as you finish it — `git tag session-3 && git push --tags` — so you can
+check out a known-good point when something stops working.
 
 ---
 
